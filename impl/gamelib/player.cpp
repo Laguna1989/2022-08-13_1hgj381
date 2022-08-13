@@ -9,6 +9,7 @@ void Player::doCreate()
     m_shape = std::make_shared<jt::Shape>();
     m_shape->makeCircle(16, textureManager());
     m_shape->setOffset(jt::OffsetMode::CENTER);
+
     m_shape->setPosition(jt::Vector2f { 400, 600 });
 }
 
@@ -34,7 +35,7 @@ void Player::doUpdate(float const elapsed)
         m_velocity.y += elapsed * moveSpeed;
     }
 
-    m_velocity = 0.97f * m_velocity;
+    m_velocity = 0.975f * m_velocity;
 
     m_position = m_position + m_velocity;
 
@@ -54,5 +55,23 @@ void Player::doUpdate(float const elapsed)
     }
 
     m_shape->setPosition(m_position);
+
+    m_hurtTimer -= elapsed;
+
+    if (m_hurtTimer >= 0) {
+        m_flashTimer -= elapsed;
+        if (m_flashTimer <= 0) {
+            m_flashTimer = 0.05f;
+            if (m_shape->getColor().a == 0) {
+                m_shape->setColor(GP::getPalette().getColor(0));
+            } else {
+                m_shape->setColor(jt::colors::Transparent);
+            }
+        }
+    } else {
+        m_shape->setColor(GP::getPalette().getColor(0));
+    }
 }
 void Player::doDraw() const { m_shape->draw(renderTarget()); }
+void Player::hurt() { m_hurtTimer = 0.6f; }
+bool Player::canBeHurt() const { return m_hurtTimer <= 0.0f; }

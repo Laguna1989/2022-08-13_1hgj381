@@ -9,14 +9,20 @@
 class Player : public jt::GameObject {
 public:
     std::shared_ptr<jt::Shape> m_shape;
+
+    void hurt();
+    bool canBeHurt() const;
+
 private:
     void doCreate() override;
     void doUpdate(float const elapsed) override;
     void doDraw() const override;
 
-    jt::Vector2f m_velocity{0.0f,0.0f};
-    jt::Vector2f m_position {0.0f,0.0f};
+    jt::Vector2f m_velocity { 0.0f, 0.0f };
+    jt::Vector2f m_position { 0.0f, 0.0f };
 
+    float m_hurtTimer = 0.0f;
+    float m_flashTimer = 0.1f;
 };
 
 #endif // INC_1HGJ381_PLAYER_HPP

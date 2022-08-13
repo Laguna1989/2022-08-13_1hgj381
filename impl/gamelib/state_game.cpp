@@ -50,10 +50,12 @@ void StateGame::doInternalCreate()
         [this](auto s, auto p) {
             auto pos = jt::Random::getRandomPointIn(jt::Rectf { p.x - 5, p.y - 5, 10, 10 });
             s->setPosition(pos);
+            s->setColor(jt::Color { 255, 255, 255, 0 });
             auto twp = jt::TweenPosition::create(s, 0.7f, pos, pos + jt::Vector2f { 0, 16 });
             add(twp);
 
             auto twa = jt::TweenAlpha::create(s, 0.9f, 255, 0);
+            twa->setSkipFrames(2);
             add(twa);
         });
     add(m_pollen);
@@ -86,6 +88,9 @@ void StateGame::doInternalUpdate(float const elapsed)
         // check player bee collision
         for (auto const& bee : *m_bees) {
 
+            if (!m_player->canBeHurt()) {
+                break;
+            }
             auto b = bee.lock();
             if (!b->canHurtPlayer()) {
                 continue;
@@ -101,6 +106,7 @@ void StateGame::doInternalUpdate(float const elapsed)
             auto const l = jt::MathHelper::length(diff);
             if (l <= 16 + 18) {
                 b->reset();
+                m_player->hurt();
                 m_lives--;
                 m_hud->getObserverLives()->notify(m_lives);
 
