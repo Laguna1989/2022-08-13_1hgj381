@@ -33,7 +33,7 @@ private:
     bool m_running { true };
     bool m_hasEnded { false };
 
-    int m_scoreP1 { 0 };
+    int m_lives { 4 };
     int m_scoreP2 { 0 };
 
     float m_timer { 5.0f };

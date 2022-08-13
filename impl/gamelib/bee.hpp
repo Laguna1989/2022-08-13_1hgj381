@@ -10,14 +10,16 @@ public:
 
     bool canHurtPlayer() const;
 
+    std::shared_ptr<jt::Sprite> m_sprite;
+
+    void reset();
+
 private:
     void doCreate() override;
     void doUpdate(float const elapsed) override;
     void doDraw() const override;
 
     jt::Vector2f m_centerPositon;
-
-    std::shared_ptr<jt::Sprite> m_sprite;
 
     float m_timePhase { 0.0f };
     float m_timeFrequ { 1.0f };

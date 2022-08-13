@@ -11,7 +11,7 @@ class ScoreDisplay;
 class Hud : public jt::GameObject {
 public:
     std::shared_ptr<ObserverInterface<int>> getObserverBeesCount() const;
-    std::shared_ptr<ObserverInterface<int>> getObserverTimer() const;
+    std::shared_ptr<ObserverInterface<int>> getObserverLives() const;
 
 private:
     std::shared_ptr<ScoreDisplay> m_scoreP1Display;

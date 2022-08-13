@@ -4,6 +4,7 @@
 #include <game_interface.hpp>
 #include <game_properties.hpp>
 #include <hud/hud.hpp>
+#include <math_helper.hpp>
 #include <random/random.hpp>
 #include <screeneffects/vignette.hpp>
 #include <shape.hpp>
@@ -34,7 +35,10 @@ void StateGame::doInternalCreate()
     add(m_bees);
 
     m_player = std::make_shared<Player>();
-    add(m_player);
+    //    add(m_player);
+    // TODO fix this
+    m_player->setGameInstance(getGame());
+    m_player->create();
 
     spawnBee();
 
@@ -48,6 +52,7 @@ void StateGame::doInternalCreate()
 void StateGame::doInternalUpdate(float const elapsed)
 {
     if (m_running) {
+        m_player->update(elapsed);
         m_world->step(elapsed, GP::PhysicVelocityIterations(), GP::PhysicPositionIterations());
         // update game logic here
         m_hud->getObserverBeesCount()->notify(m_bees->size());
@@ -59,6 +64,29 @@ void StateGame::doInternalUpdate(float const elapsed)
             spawnBee();
             m_timer = 5.0f;
         }
+
+        // check player bee collision
+        for (auto const& bee : *m_bees) {
+            auto b = bee.lock();
+            if (!b->canHurtPlayer()) {
+                continue;
+            }
+
+            auto const bp = b->m_sprite->getPosition();
+            auto const pp = m_player->m_shape->getPosition();
+
+            auto const diff = bp - pp;
+            auto const l = jt::MathHelper::length(diff);
+            if (l <= 16 + 18) {
+                b->reset();
+                m_lives--;
+                m_hud->getObserverLives()->notify(m_lives);
+
+                if (m_lives <= 0) {
+                    endGame();
+                }
+            }
+        }
     }
 
     m_background->update(elapsed);
@@ -69,6 +97,7 @@ void StateGame::doInternalDraw() const
 {
     m_background->draw(renderTarget());
     drawObjects();
+    m_player->draw();
     m_vignette->draw();
     m_hud->draw();
 }
@@ -81,8 +110,9 @@ void StateGame::endGame()
     }
     m_hasEnded = true;
     m_running = false;
-
-    getGame()->stateManager().switchState(std::make_shared<StateMenu>());
+    auto s = std::make_shared<StateMenu>();
+    s->setScore(m_bees->size());
+    getGame()->stateManager().switchState(s);
 }
 std::string StateGame::getName() const { return "Game"; }
 

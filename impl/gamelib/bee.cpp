@@ -39,7 +39,6 @@ void Bee::doUpdate(float const elapsed)
             m_toggleTimer = 0.05f;
             if (m_sprite->getColor().a == 0) {
                 m_sprite->setColor(jt::colors::White);
-                std::cout << "white\n";
             } else {
                 m_sprite->setColor(jt::colors::Transparent);
             }
@@ -50,3 +49,4 @@ void Bee::doUpdate(float const elapsed)
 }
 void Bee::doDraw() const { m_sprite->draw(renderTarget()); }
 bool Bee::canHurtPlayer() const { return m_spawnTimer <= 0; }
+void Bee::reset() { m_spawnTimer = 2.0f; }

@@ -7,7 +7,7 @@ std::shared_ptr<ObserverInterface<int>> Hud::getObserverBeesCount() const
 {
     return m_scoreP1Display;
 }
-std::shared_ptr<ObserverInterface<int>> Hud::getObserverTimer() const { return m_scoreP2Display; }
+std::shared_ptr<ObserverInterface<int>> Hud::getObserverLives() const { return m_scoreP2Display; }
 
 void Hud::doCreate()
 {
