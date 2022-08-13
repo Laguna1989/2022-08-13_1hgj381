@@ -2,13 +2,13 @@
 #define GAME_STATE_GAME_HPP
 
 #include "object_group.hpp"
+#include <bee.hpp>
 #include <box2dwrapper/box2d_world_interface.hpp>
 #include <game_state.hpp>
 #include <hud/hud.hpp>
+#include <player.hpp>
 #include <memory>
 #include <vector>
-#include <bee.hpp>
-#include <player.hpp>
 
 // fwd decls
 namespace jt {
@@ -27,7 +27,6 @@ private:
     std::shared_ptr<Hud> m_hud;
     std::shared_ptr<jt::Box2DWorldInterface> m_world { nullptr };
 
-
     std::shared_ptr<jt::ObjectGroup<Bee>> m_bees;
     std::shared_ptr<Player> m_player;
 
@@ -36,6 +35,8 @@ private:
 
     int m_scoreP1 { 0 };
     int m_scoreP2 { 0 };
+
+    float m_timer { 5.0f };
 
     void doInternalCreate() override;
     void doInternalUpdate(float const elapsed) override;

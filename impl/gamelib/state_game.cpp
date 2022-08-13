@@ -4,6 +4,7 @@
 #include <game_interface.hpp>
 #include <game_properties.hpp>
 #include <hud/hud.hpp>
+#include <random/random.hpp>
 #include <screeneffects/vignette.hpp>
 #include <shape.hpp>
 #include <sprite.hpp>
@@ -29,7 +30,6 @@ void StateGame::doInternalCreate()
     m_vignette = std::make_shared<jt::Vignette>(GP::GetScreenSize());
     add(m_vignette);
 
-
     m_bees = std::make_shared<jt::ObjectGroup<Bee>>();
     add(m_bees);
 
@@ -50,13 +50,14 @@ void StateGame::doInternalUpdate(float const elapsed)
     if (m_running) {
         m_world->step(elapsed, GP::PhysicVelocityIterations(), GP::PhysicPositionIterations());
         // update game logic here
-        if (getGame()->input().keyboard()->justPressed(jt::KeyCode::A)) {
-            m_scoreP1++;
-            m_hud->getObserverScoreP1()->notify(m_scoreP1);
-        }
-        if (getGame()->input().keyboard()->justPressed(jt::KeyCode::D)) {
-            m_scoreP2++;
-            m_hud->getObserverScoreP2()->notify(m_scoreP2);
+        m_hud->getObserverBeesCount()->notify(m_bees->size());
+        //        m_hud->getObserverTimer()->notify(m_timer);
+
+        m_timer -= elapsed;
+
+        if (m_timer <= 0.0f) {
+            spawnBee();
+            m_timer = 5.0f;
         }
     }
 
@@ -85,9 +86,12 @@ void StateGame::endGame()
 }
 std::string StateGame::getName() const { return "Game"; }
 
-
-void StateGame::spawnBee() {
+void StateGame::spawnBee()
+{
     auto bee = std::make_shared<Bee>();
+    auto const margin = 64;
+    bee->setCenterPosition(jt::Random::getRandomPointIn(jt::Rectf {
+        margin, margin, GP::GetScreenSize().x - margin, GP::GetScreenSize().y - margin }));
     add(bee);
     m_bees->push_back(bee);
 }
