@@ -29,6 +29,15 @@ void StateGame::doInternalCreate()
     m_vignette = std::make_shared<jt::Vignette>(GP::GetScreenSize());
     add(m_vignette);
 
+
+    m_bees = std::make_shared<jt::ObjectGroup<Bee>>();
+    add(m_bees);
+
+    m_player = std::make_shared<Player>();
+    add(m_player);
+
+    spawnBee();
+
     m_hud = std::make_shared<Hud>();
     add(m_hud);
 
@@ -75,3 +84,10 @@ void StateGame::endGame()
     getGame()->stateManager().switchState(std::make_shared<StateMenu>());
 }
 std::string StateGame::getName() const { return "Game"; }
+
+
+void StateGame::spawnBee() {
+    auto bee = std::make_shared<Bee>();
+    add(bee);
+    m_bees->push_back(bee);
+}
