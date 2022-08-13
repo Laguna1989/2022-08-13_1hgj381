@@ -6,6 +6,7 @@
 #include <box2dwrapper/box2d_world_interface.hpp>
 #include <game_state.hpp>
 #include <hud/hud.hpp>
+#include <particle_system.hpp>
 #include <player.hpp>
 #include <memory>
 #include <vector>
@@ -29,6 +30,7 @@ private:
 
     std::shared_ptr<jt::ObjectGroup<Bee>> m_bees;
     std::shared_ptr<Player> m_player;
+    std::shared_ptr<jt::ParticleSystem<jt::Shape, 100>> m_pollen;
 
     bool m_running { true };
     bool m_hasEnded { false };
@@ -37,6 +39,8 @@ private:
     int m_scoreP2 { 0 };
 
     float m_timer { 5.0f };
+
+    float m_pollenTimer { 0.1f };
 
     void doInternalCreate() override;
     void doInternalUpdate(float const elapsed) override;

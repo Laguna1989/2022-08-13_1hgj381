@@ -1,4 +1,5 @@
 ﻿#include "state_game.hpp"
+#include "tweens/tween_position.hpp"
 #include <box2dwrapper/box2d_world_impl.hpp>
 #include <color/color.hpp>
 #include <game_interface.hpp>
@@ -40,6 +41,22 @@ void StateGame::doInternalCreate()
     m_player->setGameInstance(getGame());
     m_player->create();
 
+    m_pollen = jt::ParticleSystem<jt::Shape, 100>::createPS(
+        [this]() -> std::shared_ptr<jt::Shape> {
+            auto s = std::make_shared<jt::Shape>();
+            s->makeCircle(1, textureManager());
+            return s;
+        },
+        [this](auto s, auto p) {
+            auto pos = jt::Random::getRandomPointIn(jt::Rectf { p.x - 5, p.y - 5, 10, 10 });
+            s->setPosition(pos);
+            auto twp = jt::TweenPosition::create(s, 0.7f, pos, pos + jt::Vector2f { 0, 16 });
+            add(twp);
+
+            auto twa = jt::TweenAlpha::create(s, 0.9f, 255, 0);
+            add(twa);
+        });
+    add(m_pollen);
     spawnBee();
 
     m_hud = std::make_shared<Hud>();
@@ -64,9 +81,11 @@ void StateGame::doInternalUpdate(float const elapsed)
             spawnBee();
             m_timer = 5.0f;
         }
+        m_pollenTimer -= elapsed;
 
         // check player bee collision
         for (auto const& bee : *m_bees) {
+
             auto b = bee.lock();
             if (!b->canHurtPlayer()) {
                 continue;
@@ -75,6 +94,9 @@ void StateGame::doInternalUpdate(float const elapsed)
             auto const bp = b->m_sprite->getPosition();
             auto const pp = m_player->m_shape->getPosition();
 
+            if (m_pollenTimer <= 0) {
+                m_pollen->fire(1, bp);
+            }
             auto const diff = bp - pp;
             auto const l = jt::MathHelper::length(diff);
             if (l <= 16 + 18) {
@@ -89,6 +111,9 @@ void StateGame::doInternalUpdate(float const elapsed)
         }
     }
 
+    if (m_pollenTimer <= 0) {
+        m_pollenTimer = 0.1f;
+    }
     m_background->update(elapsed);
     m_vignette->update(elapsed);
 }
@@ -98,6 +123,7 @@ void StateGame::doInternalDraw() const
     m_background->draw(renderTarget());
     drawObjects();
     m_player->draw();
+
     m_vignette->draw();
     m_hud->draw();
 }
