@@ -47,9 +47,9 @@ private:
     void doInternalDraw() const override;
 
     void endGame();
-    void createPlayer();
 
     void spawnBee();
+    void spawnBeeAtPlayer();
 };
 
 #endif

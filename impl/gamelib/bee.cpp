@@ -16,6 +16,21 @@ void Bee::doCreate()
     m_timePhase = jt::Random::getFloat(0.0f, 50.0f);
     m_timeFrequ = jt::Random::getFloat(0.8f, 1.2f);
     m_rotationSpeedFactor = jt::Random::getFloatGauss(1.0f, 0.1f);
+
+    auto const rotationDirection = jt::Random::getChance(0.5f);
+    if (rotationDirection) {
+        m_rotationSpeedFactor *= -1.0f;
+    }
+
+    auto const fastRotate = jt::Random::getChance(0.25f);
+    if (fastRotate) {
+        auto const axis = jt::Random::getChance();
+        if (axis) {
+            m_rotationSpeedX = 2.0f;
+        } else {
+            m_rotationSpeedY = 2.0f;
+        }
+    }
 }
 void Bee::doUpdate(float const elapsed)
 {
@@ -26,8 +41,8 @@ void Bee::doUpdate(float const elapsed)
     auto const r = radius + sin(t * 4) * 20;
 
     auto const rotationSpeed = 1.25f * m_rotationSpeedFactor;
-    auto const x = r * sin(t * rotationSpeed);
-    auto const y = r * cos(t * rotationSpeed);
+    auto const x = r * sin(t * rotationSpeed * m_rotationSpeedX);
+    auto const y = r * cos(t * rotationSpeed * m_rotationSpeedY);
 
     m_sprite->setPosition(jt::Vector2f { x, y } + m_centerPositon);
 

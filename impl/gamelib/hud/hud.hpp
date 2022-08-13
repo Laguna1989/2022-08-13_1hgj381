@@ -18,7 +18,7 @@ private:
     std::shared_ptr<ScoreDisplay> m_scoreP2Display;
 
     jt::Text::Sptr m_scoreBeesText;
-    jt::Text::Sptr m_scoreTimer;
+    jt::Text::Sptr m_scoreLives;
 
     void doCreate() override;
 

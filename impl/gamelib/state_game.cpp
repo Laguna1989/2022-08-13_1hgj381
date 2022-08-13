@@ -12,6 +12,7 @@
 #include <sprite.hpp>
 #include <state_menu.hpp>
 #include <tweens/tween_alpha.hpp>
+#include <iostream>
 
 void StateGame::doInternalCreate()
 {
@@ -63,6 +64,7 @@ void StateGame::doInternalCreate()
 
     m_hud = std::make_shared<Hud>();
     add(m_hud);
+    m_hud->getObserverLives()->notify(m_lives);
 
     // StateGame will call drawObjects itself.
     setAutoDraw(false);
@@ -83,7 +85,10 @@ void StateGame::doInternalUpdate(float const elapsed)
             spawnBee();
             m_timer = 5.0f;
         }
-        m_pollenTimer -= elapsed;
+        if (m_player->playerIdleTime() >= 2.0f) {
+            //            std::cout << "spawn at player\n";
+            spawnBeeAtPlayer();
+        }
 
         // check player bee collision
         for (auto const& bee : *m_bees) {
@@ -117,8 +122,9 @@ void StateGame::doInternalUpdate(float const elapsed)
         }
     }
 
+    m_pollenTimer -= elapsed;
     if (m_pollenTimer <= 0) {
-        m_pollenTimer = 0.1f;
+        m_pollenTimer = jt::Random::getFloat(0.075f, 0.125f);
     }
     m_background->update(elapsed);
     m_vignette->update(elapsed);
@@ -154,6 +160,17 @@ void StateGame::spawnBee()
     auto const margin = 64;
     bee->setCenterPosition(jt::Random::getRandomPointIn(jt::Rectf {
         margin, margin, GP::GetScreenSize().x - margin, GP::GetScreenSize().y - margin }));
+    add(bee);
+    m_bees->push_back(bee);
+}
+
+void StateGame::spawnBeeAtPlayer()
+{
+    auto bee = std::make_shared<Bee>();
+    auto const margin = 64;
+    auto const p = m_player->m_shape->getPosition();
+    bee->setCenterPosition(jt::Random::getRandomPointIn(jt::Rectf { p.x - 16, p.y - 16, 32, 32 }));
+    m_player->m_playerIdleTime = 0.0f;
     add(bee);
     m_bees->push_back(bee);
 }

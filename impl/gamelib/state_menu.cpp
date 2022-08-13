@@ -78,7 +78,7 @@ void StateMenu::createTextCredits()
 void StateMenu::createTextExplanation()
 {
     float half_width = GP::GetScreenSize().x / 2;
-    std::string text = "Press Space to start the game\nWASD to move";
+    std::string text = "Press Space to start the game\nWASD to move\nBees don't like if you idle";
     if (m_score != 0) {
         text += "\nLast Score: " + std::to_string(m_score);
     }

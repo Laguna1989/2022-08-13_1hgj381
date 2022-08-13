@@ -12,6 +12,9 @@ public:
 
     void hurt();
     bool canBeHurt() const;
+    float playerIdleTime() const;
+
+    float m_playerIdleTime = 0.0f;
 
 private:
     void doCreate() override;

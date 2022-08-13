@@ -24,6 +24,8 @@ private:
     float m_timePhase { 0.0f };
     float m_timeFrequ { 1.0f };
     float m_rotationSpeedFactor { 1.0f };
+    float m_rotationSpeedX { 1.0f };
+    float m_rotationSpeedY { 1.0f };
 
     float m_spawnTimer = 2.0f;
     float m_toggleTimer = 0.1f;

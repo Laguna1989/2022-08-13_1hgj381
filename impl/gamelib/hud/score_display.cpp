@@ -10,5 +10,6 @@ void ScoreDisplay::notify(int value)
 {
     if (value >= 0) {
         m_scoreText->setText(m_textPrefix + std::to_string(value));
+        //        m_scoreText->flash(0.5f, jt::colors::Red);
     }
 }
