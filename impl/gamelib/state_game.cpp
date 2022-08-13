@@ -73,6 +73,8 @@ void StateGame::doInternalCreate()
 void StateGame::doInternalUpdate(float const elapsed)
 {
     if (m_running) {
+        m_pollenTimer -= elapsed;
+
         m_player->update(elapsed);
         m_world->step(elapsed, GP::PhysicVelocityIterations(), GP::PhysicPositionIterations());
         // update game logic here
@@ -120,12 +122,12 @@ void StateGame::doInternalUpdate(float const elapsed)
                 }
             }
         }
+        if (m_pollenTimer <= 0) {
+            m_pollenTimer = jt::Random::getFloat(0.075f, 0.125f);
+            //            m_pollenTimer = 0.1f;
+        }
     }
 
-    m_pollenTimer -= elapsed;
-    if (m_pollenTimer <= 0) {
-        m_pollenTimer = jt::Random::getFloat(0.075f, 0.125f);
-    }
     m_background->update(elapsed);
     m_vignette->update(elapsed);
 }
